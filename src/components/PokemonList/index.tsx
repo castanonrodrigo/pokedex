@@ -14,7 +14,6 @@ const PokemonList = () =>{
     const response = await api.get('/pokemon/');
     console.log('resultado',JSON.stringify(response.data, null, 2));
     setPokemons(response.data.results);
-
   }
   return(
     <View style={styles.container}>
