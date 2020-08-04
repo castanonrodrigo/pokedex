@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View, FlatList} from 'react-native';
 import api from '../../api';
+import ListItem from './ListItem';
 
+const NUM_COLUMNS = 2;
 const PokemonList = () =>{
   const [pokemons, setPokemons] = useState([])
   useEffect(()=>{
@@ -18,12 +20,14 @@ const PokemonList = () =>{
     <View style={styles.container}>
       <FlatList
         data={pokemons}
-        renderItem={({item})=>{
+        numColumns={NUM_COLUMNS}
+        showsVerticalScrollIndicator={false}
+        renderItem={({item, index})=>{
           return(
-            <Text>
-              {item.name}
-            </Text>
-
+            <ListItem 
+              item={item}
+              index={index}
+            />
           )
         }}
         keyExtractor={item => item.name}
@@ -35,8 +39,8 @@ const PokemonList = () =>{
 const styles = StyleSheet.create({
   container:{
     flex:1,
-    backgroundColor:'red'
-
+    width:'100%',
+    padding:10
   }
 })
 
