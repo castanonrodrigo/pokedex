@@ -1,0 +1,12 @@
+{
+  "name": "typescriptApp",
+  "displayName": "typescriptApp",
+  "expo": {
+    "name": "typescriptApp",
+    "slug": "typescriptApp",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
