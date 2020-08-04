@@ -1,6 +1,6 @@
 export const colors ={
   background:"#FFFFFF",
-  lightGray:"#DFDFDF"
+  lightGray:"#DFDFDF",
 }
 
 interface FontsObj{
@@ -18,5 +18,5 @@ export const fonts:FontsObj = {
   input:{
     fontSize:20,
     fontWeight:'normal'
-  }
+  },
 }
