@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, TouchableWithoutFeedback, useWindowDimensions, TouchableOpacity, ScrollView} from 'react-native';
+import React, { useState,  useEffect } from 'react';
+import { StyleSheet, Text, View,  Image, TouchableOpacity } from 'react-native';
 import {fonts} from '../../constants/theme';
 import {RectButton} from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
@@ -7,6 +7,7 @@ import MainButton from '../../components/MainButton';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectPokemon, removePokemon} from '../../redux/actions';
+import {FileSystem} from 'react-native-unimodules';
 
 
 export default function PokemonScreen({route }){
@@ -16,7 +17,6 @@ export default function PokemonScreen({route }){
   const [visible, setVisible] = useState(false);
   const [inPokedex, setInPokedex] = useState<boolean>();
   const [picURI, setPicURI] = useState('');
-  const cameraRef = useRef<Object | undefined>();
   const navigation = useNavigation();
 
   useEffect(()=>{
@@ -37,6 +37,12 @@ export default function PokemonScreen({route }){
       pokemonIndex:route.params.pokemonIndex
     });
   }
+  function removePictureDirectory(){
+
+    FileSystem.deleteAsync(`${FileSystem.documentDirectory}/${route.params.pokemonName}/`)
+    .then((success)=> console.log('diretorio apagado', success))
+    .catch(err=>console.log(err));
+  }
 
   return(
     <View style = {[{backgroundColor:route.params.pokemonColor}, styles.container ]}>
@@ -52,7 +58,9 @@ export default function PokemonScreen({route }){
           {route.params.pokemonName}
           </Text>
             {inPokedex ?  <RectButton 
-          onPress={() => dispatch(removePokemon(route.params.pokemonIndex))}
+          onPress={() => { 
+            removePictureDirectory();
+            dispatch(removePokemon(route.params.pokemonIndex)) }}
             style={[{backgroundColor:'red'}, styles.button ]}
             >
               <Text style={styles.buttonText}>REMOVE FROM POKEDEX</Text>

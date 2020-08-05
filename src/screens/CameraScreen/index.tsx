@@ -1,6 +1,6 @@
 import React, {useRef, useState} from 'react';
 import {FileSystem} from 'react-native-unimodules';
-import { StyleSheet, Text, View, Image,TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Image,TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {fonts} from '../../constants/theme';
 import LinearGradient from 'react-native-linear-gradient';
@@ -8,15 +8,18 @@ import {useDispatch} from 'react-redux';
 import {selectPokemon} from '../../redux/actions';
 
 export default function CameraScreen({route}){
-  console.log(route.params);
   const dispatch = useDispatch();
   const [photoURI, setPhotoURI] = useState('');
   const [loading, setLoading] = useState(false);
   const cameraRef = useRef<Object | null>()
-  console.log(route.params);
 
   function submitPic(){
+    if (loading){
+      return;
+    }
+    setLoading(true);
     console.log('uri local', photoURI);
+    const randomNumber = String( Math.random() );
     FileSystem.getFreeDiskStorageAsync().then(( freeDisk )=>{
       console.log(freeDisk);
     })
@@ -24,23 +27,21 @@ export default function CameraScreen({route}){
       console.log(alo);
     }).catch((err)=>{console.log(err)})
 
-    const fileSystemURI = `${FileSystem.documentDirectory}/${route.params.pokemonName}/picture.jpg`
+    const fileSystemURI = `${FileSystem.documentDirectory}/${route.params.pokemonName}/picture${randomNumber}.jpg`
 
     FileSystem.copyAsync({
       from: photoURI,
       to: fileSystemURI
     }).then((sucesso)=>{console.log('sucesso',sucesso)}).catch((err)=>{console.log(err)})
 
-    FileSystem.readDirectoryAsync(`${FileSystem.documentDirectory}/bulbasaur`).then((teste) => {
-      console.log(teste);
-    }).catch((err) =>{console.log(err)})
-    const path = FileSystem.documentDirectory;
-    console.log(FileSystem.documentDirectory);
+    console.log('chegou ate dispatch',FileSystem.documentDirectory);
     dispatch(selectPokemon({
       name:route.params.pokemonName,
       index:route.params.pokemonIndex,
       pictureURI:fileSystemURI
-    }))
+    }));
+    setLoading(false);
+    Alert.alert('Picture added');
   }
 
   async function takePicture(){
