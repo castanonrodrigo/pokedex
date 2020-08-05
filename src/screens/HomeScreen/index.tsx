@@ -1,21 +1,23 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
 import { fonts, colors } from '../../constants/theme';
 import {TextInput} from 'react-native-gesture-handler';
 import PokemonList from '../../components/PokemonList';
 
-export default function HomeScreen() {
-  console.log(fonts);
+export default function HomeScreen({navigation}) {
   return (
     <View style={styles.container}>
+      <Button title='go to poke' onPress={() => navigation.navigate('Pokedex')} />
+      <View style={{height:180,opacity:1,width:'100%', justifyContent:'flex-start',  alignItems:'center' }}>
       <Text style={styles.texto}>What Pokemon are you looking for?</Text>
       <TextInput 
         style={styles.inputStyle} 
         placeholder='insert Pokemon name here' 
-        autoCapitalize='none' />
+      autoCapitalize='none' />
+      </View>
       <Text style={styles.texto}>See all Pokemons:</Text>
-      <PokemonList />
+        <PokemonList />
       <StatusBar style="auto" />
     </View>
   );

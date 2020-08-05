@@ -1,35 +1,49 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity} from 'react-native';
 import {colors} from '../../../constants/theme';
 import api from '../../../api';
 import {useNavigation} from '@react-navigation/native';
 
-const ListItem = ({item, index}) => {
+const ListItem = ({item, index, inPokedex}) => {
   const navigation = useNavigation();
   const [pokemonData, setPokemonData] = useState([]);
   const [pokemonColor, setPokemonColor] = useState('white');
+  const mounted = useRef(true);
+
+  let pokemonIndex:number;
+  if (inPokedex){
+    pokemonIndex = item.index; 
+  }else{
+    pokemonIndex = index + 1
+  }
   
   async function fetchPokemonData(item){
     const response = await api.get(`/pokemon/${item.name}/`); 
     const colorResponse = await api.get(`/pokemon-species/${item.name}`);
-    setPokemonColor(colorResponse.data.color.name);
-    setPokemonData(response.data.types);
+    if (mounted.current){
+      setPokemonColor(colorResponse.data.color.name);
+      setPokemonData(response.data.types);
+    }
+    console.log('terminou o fetch');
 
   }
 
   useEffect(()=>{
     fetchPokemonData(item);
+    return function cleanup(){
+      mounted.current = false;
+    }
   },[])
 
   return(
     <TouchableOpacity 
       style={styles.container}
-      onPress = {() => navigation.navigate('Profile', {pokemonName:item.name, pokemonColor, pokemonIndex: index + 1})}
+      onPress = {() => navigation.navigate('Profile', {pokemonName:item.name, pokemonColor, pokemonIndex: pokemonIndex })}
     >
       <Image 
         resizeMode='contain'
         source={{
-          uri:`https://pokeres.bastionbot.org/images/pokemon/${index + 1}.png`
+          uri:`https://pokeres.bastionbot.org/images/pokemon/${pokemonIndex}.png`
         }}
         style={[ styles.image, {backgroundColor:pokemonColor} ]}
       />

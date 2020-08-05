@@ -2,27 +2,35 @@ import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator} from 'react-native';
 import api from '../../api';
 import ListItem from './ListItem';
+import {useSelector} from 'react-redux';
 
 const NUM_COLUMNS = 2;
-const PokemonList = () =>{
+
+const PokemonList = ({inPokedex}) =>{
+
+  const pokedexPokemons = useSelector((state)=>state.selectedPokemons);
+  console.log(pokedexPokemons);
 
   const [offset, setOffset] = useState(0);
   const [pokemons, setPokemons] = useState<Array<Object>>([]);
   const [loading, setLoading] = useState(false);
   useEffect(()=>{
-    requestPokemons();
+    if (!inPokedex) {
+      requestPokemons();
+    }
   }, [])
 
+
+
   async function requestPokemons(){
-    if (loading){
+    if (loading || inPokedex){
       return;
     }else{
       setLoading(true);
     }
-    const response = await api.get(`/pokemon/?offset=${offset}&limit=20`);
+    const response = await api.get(`/pokemon/?offset=${offset}&limit=10`);
     setPokemons([...pokemons, ...response.data.results ]);
-    setOffset(offset + 20);
-    console.log(pokemons);
+    setOffset(offset + 10);
     setLoading(false);
   }
 
@@ -40,7 +48,7 @@ const PokemonList = () =>{
   return(
     <View style={styles.container}>
       <FlatList
-        data={pokemons}
+        data={inPokedex ? pokedexPokemons : pokemons}
         numColumns={NUM_COLUMNS}
         showsVerticalScrollIndicator={false}
         onEndReached = {requestPokemons}
@@ -50,6 +58,7 @@ const PokemonList = () =>{
             <ListItem 
               item={item}
               index={index}
+              inPokedex = {inPokedex}
             />
           )
         }}
